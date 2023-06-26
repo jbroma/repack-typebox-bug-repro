@@ -25,6 +25,14 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
+import {Type} from '@sinclair/typebox';
+
+const T = Type.Object({
+  x: Type.Number(), //   type: 'object',
+  y: Type.Number(), //   required: ['x', 'y', 'z'],
+  z: Type.Number(), //   properties: {
+});
+
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
