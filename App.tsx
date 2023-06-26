@@ -28,9 +28,9 @@ import {
 import {Type} from '@sinclair/typebox';
 
 const T = Type.Object({
-  x: Type.Number(), //   type: 'object',
-  y: Type.Number(), //   required: ['x', 'y', 'z'],
-  z: Type.Number(), //   properties: {
+  x: Type.Number(),
+  y: Type.Number(),
+  z: Type.Number(),
 });
 
 type SectionProps = PropsWithChildren<{
