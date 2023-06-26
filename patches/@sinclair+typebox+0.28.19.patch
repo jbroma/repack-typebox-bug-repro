@@ -1,0 +1,103 @@
+diff --git a/node_modules/@sinclair/typebox/typebox.js b/node_modules/@sinclair/typebox/typebox.js
+index 4033f38..7e54f77 100644
+--- a/node_modules/@sinclair/typebox/typebox.js
++++ b/node_modules/@sinclair/typebox/typebox.js
+@@ -1034,7 +1034,7 @@ var TypeExtends;
+         }
+         return TypeExtendsResult.False;
+     }
+-    function Object(left, right) {
++    function __Object__(left, right) {
+         if (TypeGuard.TIntersect(right))
+             return IntersectRight(left, right);
+         if (TypeGuard.TUnion(right))
+@@ -1342,7 +1342,7 @@ var TypeExtends;
+         if (TypeGuard.TNumber(left))
+             return Number(left, right);
+         if (TypeGuard.TObject(left))
+-            return Object(left, right);
++            return __Object__(left, right);
+         if (TypeGuard.TRecord(left))
+             return Record(left, right);
+         if (TypeGuard.TString(left))
+@@ -1385,7 +1385,7 @@ var TypeClone;
+     function Array(value) {
+         return value.map((value) => Visit(value));
+     }
+-    function Object(value) {
++    function __Object__(value) {
+         const clonedProperties = globalThis.Object.getOwnPropertyNames(value).reduce((acc, key) => {
+             return { ...acc, [key]: Visit(value[key]) };
+         }, {});
+@@ -1398,7 +1398,7 @@ var TypeClone;
+         if (IsArray(value))
+             return Array(value);
+         if (IsObject(value))
+-            return Object(value);
++            return __Object__(value);
+         return value;
+     }
+     /** Clones a type. */
+@@ -1423,7 +1423,7 @@ var IndexedAccessor;
+         const schemas = schema.anyOf.map((schema) => Visit(schema, key));
+         return exports.Type.Union(schemas);
+     }
+-    function Object(schema, key) {
++    function __Object__(schema, key) {
+         const property = schema.properties[key];
+         return property === undefined ? exports.Type.Never() : exports.Type.Union([property]);
+     }
+@@ -1442,7 +1442,7 @@ var IndexedAccessor;
+         if (schema[exports.Kind] === 'Union')
+             return Union(schema, key);
+         if (schema[exports.Kind] === 'Object')
+-            return Object(schema, key);
++            return __Object__(schema, key);
+         if (schema[exports.Kind] === 'Tuple')
+             return Tuple(schema, key);
+         return exports.Type.Never();
+@@ -1466,7 +1466,7 @@ var ObjectMap;
+         // prettier-ignore
+         return exports.Type.Union(schema.anyOf.map((inner) => Visit(inner, callback)), { ...schema });
+     }
+-    function Object(schema, callback) {
++    function __Object__(schema, callback) {
+         return callback(schema);
+     }
+     function Visit(schema, callback) {
+@@ -1479,7 +1479,7 @@ var ObjectMap;
+         if (schema[exports.Kind] === 'Union')
+             return Union(schema, callback);
+         if (schema[exports.Kind] === 'Object')
+-            return Object(schema, callback);
++            return __Object__(schema, callback);
+         return schema;
+     }
+     function Map(schema, callback, options) {
+@@ -1499,7 +1499,7 @@ var KeyResolver;
+         const sets = schema.anyOf.map((inner) => Visit(inner, options));
+         return [...sets.reduce((set, outer) => outer.map((key) => (sets.every((inner) => inner.includes(key)) ? set.add(key) : set))[0], new Set())];
+     }
+-    function Object(schema, options) {
++    function __Object__(schema, options) {
+         return globalThis.Object.keys(schema.properties);
+     }
+     function Record(schema, options) {
+@@ -1511,7 +1511,7 @@ var KeyResolver;
+         if (TypeGuard.TUnion(schema))
+             return Union(schema, options);
+         if (TypeGuard.TObject(schema))
+-            return Object(schema, options);
++            return __Object__(schema, options);
+         if (TypeGuard.TRecord(schema))
+             return Record(schema, options);
+         return [];
+@@ -2091,7 +2091,7 @@ class StandardTypeBuilder extends TypeBuilder {
+     }
+     /** `[Standard]` Creates an Object type */
+     Object(properties, options = {}) {
+-        const propertyKeys = globalThis.Object.getOwnPropertyNames(properties);
++        const propertyKeys = Object.getOwnPropertyNames(properties);
+         const optionalKeys = propertyKeys.filter((key) => TypeGuard.TOptional(properties[key]) || TypeGuard.TReadonlyOptional(properties[key]));
+         const requiredKeys = propertyKeys.filter((name) => !optionalKeys.includes(name));
+         const clonedAdditionalProperties = TypeGuard.TSchema(options.additionalProperties) ? { additionalProperties: TypeClone.Clone(options.additionalProperties, {}) } : {};
